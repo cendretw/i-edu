@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>國際交流活動追蹤手札</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@500;700&family=Noto+Sans+TC:wght@400;500;700&family=Space+Mono&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#F7F5F0;
+    --ink:#2B2A28;
+    --ink-soft:#6B6862;
+    --line:#DFDACD;
+    --nepal:#3D5A73;
+    --nepal-soft:#DCE6EC;
+    --nepal-gold:#C9A66B;
+    --japan:#A63446;
+    --japan-soft:#F2DEE0;
+    --japan-sun:#E3B23C;
+    --done:#5B7A5B;
+    --card:#FFFFFF;
+    --shadow: 0 2px 10px rgba(43,42,40,0.06);
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:
+      linear-gradient(var(--paper),var(--paper)),
+      repeating-linear-gradient(transparent, transparent 27px, var(--line) 28px);
+    background-attachment:local;
+    color:var(--ink);
+    font-family:'Noto Sans TC',sans-serif;
+    min-height:100vh;
+    padding-bottom:60px;
+  }
+  header{
+    padding:32px 24px 18px;
+    max-width:1100px;
+    margin:0 auto;
+  }
+  h1{
+    font-family:'Noto Serif TC',serif;
+    font-weight:700;
+    font-size:28px;
+    margin:0 0 4px;
+    letter-spacing:0.02em;
+  }
+  .sub{
+    color:var(--ink-soft);
+    font-size:13px;
+    font-family:'Space Mono',monospace;
+  }
+  .banner{
+    max-width:1100px;
+    margin:12px auto 0;
+    padding:10px 16px;
+    border-radius:8px;
+    font-size:13px;
+    background:#FDF2D0;
+    border:1px solid #E3C978;
+    color:#6B5416;
+  }
+  .banner.ok{background:#E4EFE4;border-color:#9DBB9D;color:#3A5A3A;}
+  .tabs{
+    max-width:1100px;
+    margin:20px auto 0;
+    padding:0 24px;
+    display:flex;
+    gap:8px;
+  }
+  .tab{
+    font-family:'Noto Serif TC',serif;
+    font-weight:700;
+    font-size:14px;
+    padding:9px 18px;
+    border-radius:8px 8px 0 0;
+    background:transparent;
+    border:1px solid transparent;
+    border-bottom:none;
+    cursor:pointer;
+    color:var(--ink-soft);
+  }
+  .tab.active{
+    background:var(--card);
+    color:var(--ink);
+    border-color:var(--line);
+    box-shadow:0 -2px 6px rgba(0,0,0,0.03);
+  }
+  main{
+    max-width:1100px;
+    margin:0 auto;
+    padding:20px 24px 0;
+  }
+  .branches{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:22px;
+  }
+  @media (max-width:820px){ .branches{grid-template-columns:1fr;} }
+
+  .branch-card{
+    background:var(--card);
+    border-radius:14px;
+    box-shadow:var(--shadow);
+    overflow:hidden;
+    border-top:5px solid var(--accent);
+  }
+  .branch-head{
+    padding:18px 20px 14px;
+    background:var(--accent-soft);
+  }
+  .branch-head .eyebrow{
+    font-family:'Space Mono',monospace;
+    font-size:11px;
+    letter-spacing:0.08em;
+    color:var(--accent);
+    text-transform:uppercase;
+  }
+  .branch-head h2{
+    font-family:'Noto Serif TC',serif;
+    font-size:20px;
+    margin:2px 0 6px;
+  }
+  .branch-meta{
+    font-size:12.5px;
+    color:var(--ink-soft);
+    line-height:1.7;
+  }
+  .phase-list{ padding:6px 12px 16px; }
+  .phase{
+    border-bottom:1px dashed var(--line);
+    padding:10px 6px;
+  }
+  .phase:last-child{border-bottom:none;}
+  .phase-row{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    cursor:pointer;
+    user-select:none;
+  }
+  .twist{
+    width:16px; color:var(--accent); font-size:12px; flex:none;
+    transition:transform .15s ease;
+  }
+  .twist.open{ transform:rotate(90deg); }
+  .phase-name{ font-weight:700; font-size:14.5px; flex:1; }
+  .phase-date{
+    font-family:'Space Mono',monospace;
+    font-size:11px;
+    color:var(--ink-soft);
+    white-space:nowrap;
+  }
+  .progress-pill{
+    font-family:'Space Mono',monospace;
+    font-size:10.5px;
+    background:var(--accent-soft);
+    color:var(--accent);
+    border-radius:20px;
+    padding:2px 8px;
+    white-space:nowrap;
+  }
+  .task-list{
+    padding:8px 4px 4px 26px;
+    display:none;
+  }
+  .task-list.open{ display:block; }
+  .task-row{
+    display:flex;
+    align-items:flex-start;
+    gap:8px;
+    padding:5px 4px;
+    border-radius:6px;
+  }
+  .task-row:hover{ background:#FAFAF7; }
+  .task-row input[type=checkbox]{
+    margin-top:3px; accent-color:var(--accent); cursor:pointer; flex:none;
+  }
+  .task-text{
+    flex:1;
+    font-size:13.5px;
+    outline:none;
+    line-height:1.5;
+    padding:2px 4px;
+    border-radius:4px;
+  }
+  .task-text:focus{ background:#fff; box-shadow:0 0 0 1px var(--line); }
+  .task-row.done .task-text{ color:var(--ink-soft); text-decoration:line-through; }
+  .icon-btn{
+    background:none; border:none; cursor:pointer;
+    color:var(--ink-soft); font-size:13px; padding:2px 4px; flex:none;
+    opacity:0; transition:opacity .1s;
+  }
+  .task-row:hover .icon-btn{ opacity:1; }
+  .add-task-btn, .add-phase-btn{
+    font-family:'Space Mono',monospace;
+    font-size:11.5px;
+    color:var(--accent);
+    background:none;
+    border:1px dashed var(--accent);
+    border-radius:6px;
+    padding:4px 9px;
+    cursor:pointer;
+    margin:6px 0 2px 26px;
+  }
+  .add-phase-btn{ margin:12px 12px 0; display:block; width:calc(100% - 24px); }
+
+  /* ---- Gantt view ---- */
+  .gantt-wrap{
+    background:var(--card);
+    border-radius:14px;
+    box-shadow:var(--shadow);
+    padding:20px;
+    overflow-x:auto;
+  }
+  .gantt-grid{
+    display:grid;
+    grid-template-columns: 200px repeat(10, 90px);
+    min-width:1100px;
+  }
+  .gantt-grid .month-label{
+    font-family:'Space Mono',monospace;
+    font-size:10.5px;
+    color:var(--ink-soft);
+    text-align:center;
+    padding:6px 0;
+    border-left:1px solid var(--line);
+  }
+  .gantt-grid .corner{ }
+  .gantt-row{
+    display:contents;
+  }
+  .gantt-row .row-label{
+    font-size:12.5px;
+    font-weight:700;
+    padding:10px 8px 10px 0;
+    display:flex;
+    align-items:center;
+    gap:6px;
+    cursor:pointer;
+    border-top:1px solid var(--line);
+  }
+  .gantt-row .row-label .dot{
+    width:9px;height:9px;border-radius:50%;flex:none;
+  }
+  .gantt-cell{
+    border-top:1px solid var(--line);
+    border-left:1px solid var(--line);
+    min-height:44px;
+    position:relative;
+  }
+  .gantt-bar{
+    position:absolute;
+    top:8px; bottom:8px; left:2px; right:2px;
+    border-radius:6px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:10px;
+    font-family:'Space Mono',monospace;
+    color:#fff;
+    cursor:pointer;
+  }
+  .gantt-tasks{
+    grid-column:1 / -1;
+    display:none;
+    padding:10px 10px 14px 26px;
+    background:#FAFAF7;
+    border-top:1px solid var(--line);
+  }
+  .gantt-tasks.open{ display:block; }
+
+  footer{
+    max-width:1100px;
+    margin:28px auto 0;
+    padding:0 24px;
+    font-size:11.5px;
+    color:var(--ink-soft);
+    font-family:'Space Mono',monospace;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>國際交流活動追蹤手札</h1>
+  <div class="sub">118雙語班 × 尼泊爾　／　桃山高校 × 日本　— 2026.08 – 2027.06</div>
+</header>
+
+<div id="banner" class="banner">尚未連接 Google 試算表：目前顯示的是範例資料，重新整理會還原。請依 CONFIG.WEBAPP_URL 說明連接後即可永久保存與同步。</div>
+
+<div class="tabs">
+  <button class="tab active" data-view="mindmap">🌿 心智圖檢視</button>
+  <button class="tab" data-view="gantt">📊 甘特圖檢視</button>
+</div>
+
+<main>
+  <div id="view-mindmap"></div>
+  <div id="view-gantt" style="display:none;"></div>
+</main>
+
+<footer>資料同步：Google Apps Script Web App（GET）— 每次操作會直接寫回你的試算表</footer>
+
+<script>
+/* ============ 設定：部署 Apps Script 後，把網址貼在這裡 ============ */
+const CONFIG = {
+  WEBAPP_URL: 'PASTE_YOUR_APPS_SCRIPT_WEB_APP_URL_HERE'
+};
+/* =================================================================== */
+
+const BRANCHES = {
+  '尼泊爾': { label:'尼泊爾交流', accent:'var(--nepal)', accentSoft:'var(--nepal-soft)', color:'#3D5A73',
+    meta: ['班級：118雙語班', '帶領老師：Alena 老師', '交流期間：2026/10、2026/12、2027/01（每次週三 16:10–17:10）'] },
+  '日本': { label:'日本桃山高校交流', accent:'var(--japan)', accentSoft:'var(--japan-soft)', color:'#A63446',
+    meta: ['主題：水資源共同研究', '帶領老師：我', '每月一次線上會議（週二 JPN17:00／TWN16:00-17:00）', '2027/3/15-17 來訪台灣，3/16 到校參訪', '我的每週例行工作：確認學生簡報準備＋練習＋完成度'] }
+};
+
+const MONTHS = ['2026-09','2026-10','2026-11','2026-12','2027-01','2027-02','2027-03','2027-04','2027-05','2027-06'];
+const MONTH_LABEL = m => m.slice(0,4)+'.'+m.slice(5,7);
+
+function seedData(){
+  const rows = [];
+  let n = 0;
+  const push = (branch, phaseOrder, phaseName, phaseDate, task, done) => {
+    n++;
+    rows.push({ id:'seed'+n, branch, phaseOrder, phaseName, phaseDate, task, done: !!done, notes:'' });
+  };
+  // 尼泊爾
+  push('尼泊爾',1,'前置媒合','2026-07','完成初步媒合',true);
+  push('尼泊爾',2,'8月．討論互動內容','2026-08','與尼泊爾端確認交流形式',false);
+  push('尼泊爾',2,'8月．討論互動內容','2026-08','與 Alena 討論教學設計',false);
+  push('尼泊爾',2,'8月．討論互動內容','2026-08','排定 10/12/1 月三次時段',false);
+  push('尼泊爾',3,'10月．第一次交流','2026-10','交流前教材與設備測試',false);
+  push('尼泊爾',3,'10月．第一次交流','2026-10','執行交流（週三 16:10–17:10）',false);
+  push('尼泊爾',3,'10月．第一次交流','2026-10','課後記錄與回饋',false);
+  push('尼泊爾',4,'12月．第二次交流','2026-12','交流前教材與設備測試',false);
+  push('尼泊爾',4,'12月．第二次交流','2026-12','執行交流（週三 16:10–17:10）',false);
+  push('尼泊爾',4,'12月．第二次交流','2026-12','課後記錄與回饋',false);
+  push('尼泊爾',5,'1月．第三次交流','2027-01','交流前教材與設備測試',false);
+  push('尼泊爾',5,'1月．第三次交流','2027-01','執行交流（週三 16:10–17:10）',false);
+  push('尼泊爾',5,'1月．第三次交流','2027-01','課後記錄與回饋',false);
+  push('尼泊爾',6,'成果總結','2027-01','學生心得整理',false);
+  push('尼泊爾',6,'成果總結','2027-01','交流成果紀錄與存檔',false);
+  push('尼泊爾',6,'成果總結','2027-01','檢討與下學期規劃',false);
+
+  // 日本（依 2026.8月案 正式時程；每次線上會議皆為週二 JPN17:00/TWN16:00-17:00）
+  push('日本',1,'9/15．Self intro','2026-09','Opening talk 主題：Self intro',false);
+  push('日本',1,'9/15．Self intro','2026-09','Presentation 主題：General info about the school system',false);
+  push('日本',1,'9/15．Self intro','2026-09','學生簡報準備',false);
+  push('日本',1,'9/15．Self intro','2026-09','學生對話／簡報練習',false);
+  push('日本',1,'9/15．Self intro','2026-09','確認學生完成度',false);
+
+  push('日本',2,'10/20．教材與科目','2026-10','Opening talk 主題：Introducing textbooks or exams',false);
+  push('日本',2,'10/20．教材與科目','2026-10','Presentation 主題：If you could add a new subject, why?',false);
+  push('日本',2,'10/20．教材與科目','2026-10','學生簡報準備',false);
+  push('日本',2,'10/20．教材與科目','2026-10','學生對話／簡報練習',false);
+  push('日本',2,'10/20．教材與科目','2026-10','確認學生完成度',false);
+
+  push('日本',3,'11/17．午餐與水資源總論','2026-11','Opening talk 主題：What do you eat for lunch?',false);
+  push('日本',3,'11/17．午餐與水資源總論','2026-11','Presentation 主題：Water Climate/Quality/Daily Life/Facility/Home appliance/City',false);
+  push('日本',3,'11/17．午餐與水資源總論','2026-11','學生簡報準備',false);
+  push('日本',3,'11/17．午餐與水資源總論','2026-11','學生對話／簡報練習',false);
+  push('日本',3,'11/17．午餐與水資源總論','2026-11','確認學生完成度',false);
+
+  push('日本',4,'12/15．耶誕與研究結果','2026-12','Opening talk 主題：How do you celebrate Christmas?',false);
+  push('日本',4,'12/15．耶誕與研究結果','2026-12','Presentation 主題：Research result',false);
+  push('日本',4,'12/15．耶誕與研究結果','2026-12','學生簡報準備',false);
+  push('日本',4,'12/15．耶誕與研究結果','2026-12','學生對話／簡報練習',false);
+  push('日本',4,'12/15．耶誕與研究結果','2026-12','確認學生完成度',false);
+
+  push('日本',5,'1/19．新年＋行前會議','2027-01','Opening talk 主題：How do you spend New Year?',false);
+  push('日本',5,'1/19．新年＋行前會議','2027-01','Presentation：Meeting before the visit，討論來訪準備事項',false);
+  push('日本',5,'1/19．新年＋行前會議','2027-01','學生簡報準備',false);
+  push('日本',5,'1/19．新年＋行前會議','2027-01','學生對話／簡報練習',false);
+  push('日本',5,'1/19．新年＋行前會議','2027-01','確認學生完成度',false);
+
+  push('日本',6,'行前準備（3/15-17 來訪）','2027-02','訂定接待日程細節',false);
+  push('日本',6,'行前準備（3/15-17 來訪）','2027-02','場地／教室／交通安排',false);
+  push('日本',6,'行前準備（3/15-17 來訪）','2027-03','學生接待分組與任務分配',false);
+  push('日本',6,'行前準備（3/15-17 來訪）','2027-03','家長與校方通知確認',false);
+  push('日本',6,'行前準備（3/15-17 來訪）','2027-03','Simple experiment/Discussion 內容準備',false);
+
+  push('日本',7,'3/15-17．實體來訪','2027-03','3/15 抵達與迎接',false);
+  push('日本',7,'3/15-17．實體來訪','2027-03','3/16 到校參訪：Ceremony→CampusTour→CulturalExchange→Lunch→實驗/討論→Field Trip→Rest→Dinner',false);
+  push('日本',7,'3/15-17．實體來訪','2027-03','3/17 賦歸與歡送',false);
+  push('日本',7,'3/15-17．實體來訪','2027-03','每日照顧與突發狀況記錄',false);
+
+  push('日本',8,'4/20．真心話與文化','2027-04','Opening talk 主題：Very very very honest questions',false);
+  push('日本',8,'4/20．真心話與文化','2027-04','Presentation 主題：Culture',false);
+  push('日本',8,'4/20．真心話與文化','2027-04','學生簡報準備',false);
+  push('日本',8,'4/20．真心話與文化','2027-04','學生對話／簡報練習',false);
+  push('日本',8,'4/20．真心話與文化','2027-04','確認學生完成度',false);
+
+  push('日本',9,'5/25．期末總結報告','2027-05','Final presentation：研究回顧＋原創解方',false);
+  push('日本',9,'5/25．期末總結報告','2027-05','雙方互相建議、共同點與未來展望討論',false);
+  push('日本',9,'5/25．期末總結報告','2027-05','學生簡報準備',false);
+  push('日本',9,'5/25．期末總結報告','2027-05','學生對話／簡報練習',false);
+  push('日本',9,'5/25．期末總結報告','2027-05','確認學生完成度',false);
+  return rows;
+}
+
+let tasks = seedData();
+let connected = false;
+let expanded = new Set(); // phase keys open
+let currentView = 'mindmap';
+
+function phaseKey(branch, phaseOrder, phaseName){ return branch+'::'+phaseOrder+'::'+phaseName; }
+
+function isConfigured(){
+  return CONFIG.WEBAPP_URL && CONFIG.WEBAPP_URL.indexOf('http') === 0;
+}
+
+async function api(action, params){
+  if(!isConfigured()) return null;
+  const qs = new URLSearchParams({action, ...params}).toString();
+  const res = await fetch(CONFIG.WEBAPP_URL + '?' + qs);
+  return res.json();
+}
+
+async function loadFromSheet(){
+  const banner = document.getElementById('banner');
+  if(!isConfigured()){
+    connected = false;
+    banner.className = 'banner';
+    banner.textContent = '尚未連接 Google 試算表：目前顯示的是範例資料，重新整理會還原。請依 CONFIG.WEBAPP_URL 說明連接後即可永久保存與同步。';
+    render();
+    return;
+  }
+  try{
+    const data = await api('list', {});
+    if(data && data.ok){
+      tasks = data.tasks;
+      connected = true;
+      banner.className = 'banner ok';
+      banner.textContent = '✓ 已連接 Google 試算表，所有變更會即時同步保存。';
+    } else {
+      throw new Error(data && data.error);
+    }
+  }catch(err){
+    connected = false;
+    banner.className = 'banner';
+    banner.textContent = '⚠ 無法連接試算表（' + err.message + '），暫時顯示範例資料，變更不會被保存。';
+  }
+  render();
+}
+
+async function addTask(branch, phaseOrder, phaseName, phaseDate){
+  const text = prompt('新增任務內容：');
+  if(!text) return;
+  if(connected){
+    await api('add', {branch, phaseOrder, phaseName, phaseDate, task:text});
+    await loadFromSheet();
+  } else {
+    tasks.push({id:'local'+Date.now(), branch, phaseOrder, phaseName, phaseDate, task:text, done:false, notes:''});
+    render();
+  }
+}
+
+async function addPhase(branch){
+  const name = prompt('新階段名稱（例如：4月．期末檢討）：');
+  if(!name) return;
+  const date = prompt('對應月份（格式 YYYY-MM，例如 2027-04）：', '2027-04') || '';
+  const maxOrder = Math.max(0, ...tasks.filter(t=>t.branch===branch).map(t=>t.phaseOrder));
+  await addTask(branch, maxOrder+1, name, date);
+}
+
+async function toggleDone(id){
+  const t = tasks.find(x=>x.id===id);
+  if(!t) return;
+  t.done = !t.done;
+  render();
+  if(connected) await api('toggle', {id});
+}
+
+async function editTaskText(id, newText){
+  const t = tasks.find(x=>x.id===id);
+  if(!t || t.task === newText) return;
+  t.task = newText;
+  if(connected) await api('update', {id, field:'task', value:newText});
+}
+
+async function deleteTask(id){
+  if(!confirm('確定要刪除這個項目嗎？')) return;
+  tasks = tasks.filter(x=>x.id!==id);
+  render();
+  if(connected) await api('delete', {id});
+}
+
+async function duplicateTask(id){
+  const t = tasks.find(x=>x.id===id);
+  if(!t) return;
+  if(connected){
+    await api('duplicate', {id});
+    await loadFromSheet();
+  } else {
+    tasks.push({...t, id:'local'+Date.now(), task:t.task+'（複製）', done:false});
+    render();
+  }
+}
+
+function groupByBranchPhase(branch){
+  const map = new Map();
+  tasks.filter(t=>t.branch===branch).forEach(t=>{
+    const key = phaseKey(t.branch, t.phaseOrder, t.phaseName);
+    if(!map.has(key)) map.set(key, {phaseOrder:t.phaseOrder, phaseName:t.phaseName, phaseDate:t.phaseDate, items:[]});
+    map.get(key).items.push(t);
+  });
+  return [...map.values()].sort((a,b)=>a.phaseOrder-b.phaseOrder);
+}
+
+function esc(s){ return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+function renderMindmap(){
+  const root = document.getElementById('view-mindmap');
+  let html = '<div class="branches">';
+  for(const branchKey of Object.keys(BRANCHES)){
+    const b = BRANCHES[branchKey];
+    const phases = groupByBranchPhase(branchKey);
+    html += `<div class="branch-card" style="--accent:${b.accent};--accent-soft:${b.accentSoft}">
+      <div class="branch-head">
+        <div class="eyebrow">Branch</div>
+        <h2>${b.label}</h2>
+        <div class="branch-meta">${b.meta.map(m=>esc(m)).join('<br>')}</div>
+      </div>
+      <div class="phase-list">`;
+    phases.forEach(p=>{
+      const key = phaseKey(branchKey, p.phaseOrder, p.phaseName);
+      const open = expanded.has(key);
+      const doneCount = p.items.filter(i=>i.done).length;
+      html += `<div class="phase">
+        <div class="phase-row" onclick="toggleExpand('${key}')">
+          <span class="twist ${open?'open':''}">▶</span>
+          <span class="phase-name">${esc(p.phaseName)}</span>
+          <span class="phase-date">${esc(p.phaseDate)}</span>
+          <span class="progress-pill">${doneCount}/${p.items.length}</span>
+        </div>
+        <div class="task-list ${open?'open':''}">`;
+      p.items.forEach(t=>{
+        html += `<div class="task-row ${t.done?'done':''}">
+          <input type="checkbox" ${t.done?'checked':''} onchange="toggleDone('${t.id}')">
+          <div class="task-text" contenteditable="true" onblur="editTaskText('${t.id}', this.innerText.trim())">${esc(t.task)}</div>
+          <button class="icon-btn" title="複製" onclick="duplicateTask('${t.id}')">⧉</button>
+          <button class="icon-btn" title="刪除" onclick="deleteTask('${t.id}')">✕</button>
+        </div>`;
+      });
+      html += `<button class="add-task-btn" onclick="addTask('${branchKey}', ${p.phaseOrder}, '${p.phaseName.replace(/'/g,"\\'")}', '${p.phaseDate}')">+ 新增任務</button>`;
+      html += `</div></div>`;
+    });
+    html += `</div><button class="add-phase-btn" onclick="addPhase('${branchKey}')">+ 新增階段</button></div>`;
+  }
+  html += '</div>';
+  root.innerHTML = html;
+}
+
+function monthDiff(m){ // index within MONTHS, or -1
+  return MONTHS.indexOf(m);
+}
+
+function renderGantt(){
+  const root = document.getElementById('view-gantt');
+  let rows = [];
+  for(const branchKey of Object.keys(BRANCHES)){
+    groupByBranchPhase(branchKey).forEach(p=>rows.push({branch:branchKey, ...p}));
+  }
+  let grid = `<div class="gantt-wrap"><div class="gantt-grid">
+    <div class="corner"></div>${MONTHS.map(m=>`<div class="month-label">${MONTH_LABEL(m)}</div>`).join('')}`;
+  rows.forEach((p,idx)=>{
+    const b = BRANCHES[p.branch];
+    const key = phaseKey(p.branch, p.phaseOrder, p.phaseName);
+    const open = expanded.has('gantt::'+key);
+    const doneCount = p.items.filter(i=>i.done).length;
+    const mi = monthDiff(p.phaseDate);
+    grid += `<div class="gantt-row">
+      <div class="row-label" onclick="toggleExpand('gantt::${key}')"><span class="dot" style="background:${b.color}"></span>${esc(p.phaseName)}</div>
+      ${MONTHS.map((m,i)=>{
+        if(i===mi){
+          return `<div class="gantt-cell"><div class="gantt-bar" style="background:${b.color}" onclick="toggleExpand('gantt::${key}')">${doneCount}/${p.items.length}</div></div>`;
+        }
+        return `<div class="gantt-cell"></div>`;
+      }).join('')}
+      <div class="gantt-tasks ${open?'open':''}">
+        ${p.items.map(t=>`<div class="task-row ${t.done?'done':''}">
+          <input type="checkbox" ${t.done?'checked':''} onchange="toggleDone('${t.id}')">
+          <div class="task-text" contenteditable="true" onblur="editTaskText('${t.id}', this.innerText.trim())">${esc(t.task)}</div>
+          <button class="icon-btn" title="複製" onclick="duplicateTask('${t.id}')">⧉</button>
+          <button class="icon-btn" title="刪除" onclick="deleteTask('${t.id}')">✕</button>
+        </div>`).join('')}
+        <button class="add-task-btn" onclick="addTask('${p.branch}', ${p.phaseOrder}, '${p.phaseName.replace(/'/g,"\\'")}', '${p.phaseDate}')">+ 新增任務</button>
+      </div>
+    </div>`;
+  });
+  grid += `</div></div>`;
+  root.innerHTML = grid;
+}
+
+function toggleExpand(key){
+  if(expanded.has(key)) expanded.delete(key); else expanded.add(key);
+  render();
+}
+
+function render(){
+  if(currentView==='mindmap') renderMindmap(); else renderGantt();
+}
+
+document.querySelectorAll('.tab').forEach(tab=>{
+  tab.addEventListener('click', ()=>{
+    document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+    tab.classList.add('active');
+    currentView = tab.dataset.view;
+    document.getElementById('view-mindmap').style.display = currentView==='mindmap' ? 'block':'none';
+    document.getElementById('view-gantt').style.display = currentView==='gantt' ? 'block':'none';
+    render();
+  });
+});
+
+loadFromSheet();
+</script>
+</body>
+</html>
